@@ -6,9 +6,8 @@ function onClicked(tab) {
   var h = 450;
   var x = (screen.width - w) / 2;
   var y = (screen.height - h) / 2;
-  window.open(url, null,
-      'left='+x+',top='+y+',width='+w+',height='+h
-      +',status=no');
+  var features = `left=${x},top=${y},width=${w},height=${h},status=no`;
+  window.open(url, null, features);
 }
 
 chrome.browserAction.onClicked.addListener(onClicked);
