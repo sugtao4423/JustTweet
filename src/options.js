@@ -1,13 +1,11 @@
-(function(){
-    chrome.storage.sync.get({'prefix': ''}, function(items){
-        var result = prompt('Set Prefix', items.prefix);
-        if(result !== null){
-            chrome.storage.sync.set({'prefix': result}, function(){
-                alert(`Prefix Saved!\n'${result}'`);
-                window.close();
-            });
-        }else{
-            window.close();
-        }
-    });
-})();
+;(async () => {
+  const options = await chrome.storage.sync.get(['prefix'])
+  const prefix = options.prefix ?? ''
+
+  const result = prompt('Set Prefix', prefix)
+  if (result !== null) {
+    await chrome.storage.sync.set({ prefix: result })
+    alert(`Prefix Saved!\n'${result}'`)
+  }
+  window.close()
+})()

@@ -1,17 +1,27 @@
-function onClicked(tab) {
-  chrome.storage.sync.get({'prefix': ''}, function(items){
-    var url = 'https://twitter.com/intent/tweet?'
-      + 'text=' + encodeURIComponent(items.prefix) + encodeURIComponent(tab.title)
-      + '&url=' + encodeURIComponent(tab.url);
-    var w = 550;
-    var h = 450;
-    var x = (screen.width - w) / 2;
-    var y = (screen.height - h) / 2;
-    var features = `left=${x},top=${y},width=${w},height=${h},status=no`;
-    window.open(url, null, features);
-  });
+const onClicked = async (tab) => {
+  const options = await chrome.storage.sync.get(['prefix'])
+  const prefix = options.prefix ?? ''
+
+  const params = new URLSearchParams({
+    text: prefix + tab.title,
+    url: tab.url,
+  })
+  const url = 'https://twitter.com/intent/tweet?' + params.toString()
+
+  const width = 550
+  const height = 450
+  const currentWindow = await chrome.windows.getCurrent()
+  const left = currentWindow.left + (currentWindow.width - width) / 2
+  const top = currentWindow.top + (currentWindow.height - height) / 2
+
+  await chrome.windows.create({
+    url,
+    type: 'popup',
+    width,
+    height,
+    left: Math.floor(left),
+    top: Math.floor(top),
+  })
 }
 
-chrome.browserAction.onClicked.addListener(onClicked);
-
-// vim:set ts=8 sts=2 sw=2 tw=0 et:
+chrome.action.onClicked.addListener(onClicked)
